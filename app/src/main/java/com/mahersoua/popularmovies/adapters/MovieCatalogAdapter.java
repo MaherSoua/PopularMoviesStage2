@@ -23,9 +23,9 @@ public class MovieCatalogAdapter extends RecyclerView.Adapter<MovieCatalogAdapte
     private final Context mContext;
     private List<MovieModel> mMovieList = new ArrayList<>();
 
-    public MovieCatalogAdapter(Context context, List<MovieModel> list){
+    public MovieCatalogAdapter(Context context, List<MovieModel> list) {
         mContext = context;
-        if(list != null){
+        if (list != null) {
             mMovieList = list;
         }
     }
@@ -40,8 +40,8 @@ public class MovieCatalogAdapter extends RecyclerView.Adapter<MovieCatalogAdapte
     @Override
     public void onBindViewHolder(@NonNull CatalogMovieHolder holder, int position) {
         MovieModel movieModel = mMovieList.get(position);
-        String URL = "http://image.tmdb.org/t/p/w500/";
-        Picasso.get().load(URL +movieModel.getPosterPath()).resize(540, 900).centerCrop().into(holder.posterContainer);
+        String URL = mContext.getString(R.string.image_url).replace("size", "w500");
+        Picasso.get().load(URL + movieModel.getPosterPath()).resize(540, 900).centerCrop().into(holder.posterContainer);
         holder.mItemView.setTag(position);
     }
 
@@ -51,8 +51,8 @@ public class MovieCatalogAdapter extends RecyclerView.Adapter<MovieCatalogAdapte
     }
 
 
-    public void updateList(List<MovieModel> list){
-        if(list != null){
+    public void updateList(List<MovieModel> list) {
+        if (list != null) {
             mMovieList = list;
         }
         notifyDataSetChanged();
@@ -61,6 +61,7 @@ public class MovieCatalogAdapter extends RecyclerView.Adapter<MovieCatalogAdapte
     class CatalogMovieHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ImageView posterContainer;
         private final View mItemView;
+
         private CatalogMovieHolder(View itemView) {
             super(itemView);
             posterContainer = itemView.findViewById(R.id.posterContainer);

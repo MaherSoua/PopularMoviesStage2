@@ -35,7 +35,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         setContentView(R.layout.activity_catalog);
         movieRecyclerView = findViewById(R.id.listContainer);
 
-        if(hasInternetAccess()){
+        if (hasInternetAccess()) {
             findViewById(R.id.connectionErrorTv).setVisibility(View.VISIBLE);
             findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
             return;
@@ -44,12 +44,12 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         }
 
         int spanCount;
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             spanCount = 2;
         } else {
             spanCount = 3;
         }
-        RecyclerView.LayoutManager recyclerViewLayoutManager = new GridLayoutManager(this , spanCount);
+        RecyclerView.LayoutManager recyclerViewLayoutManager = new GridLayoutManager(this, spanCount);
 
         movieRecyclerView.setLayoutManager(recyclerViewLayoutManager);
         movieCatalogAdapter = new MovieCatalogAdapter(this, null);
@@ -57,20 +57,20 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
 
         mCurrentApiUrl = MoviesDataLoader.DEFAULT_URL;
 
-        if(savedInstanceState == null){
-            MoviesDataLoader.getInstance().requestMovieList(this , mCurrentApiUrl);
+        if (savedInstanceState == null) {
+            MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
         } else {
             mCurrentApiUrl = savedInstanceState.getString(API_URL, MoviesDataLoader.DEFAULT_URL);
-            mCurrentItemIndex = savedInstanceState.getInt(MENU_ITEM_INDEX , 0);
-            MoviesDataLoader.getInstance().requestMovieList(this , mCurrentApiUrl);
+            mCurrentItemIndex = savedInstanceState.getInt(MENU_ITEM_INDEX, 0);
+            MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
             movieRecyclerView.smoothScrollToPosition(0);
         }
     }
 
-    private boolean hasInternetAccess(){
+    private boolean hasInternetAccess() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(null != connectivityManager){
-            NetworkInfo info  = connectivityManager.getActiveNetworkInfo();
+        if (null != connectivityManager) {
+            NetworkInfo info = connectivityManager.getActiveNetworkInfo();
             return null == info || !info.isConnectedOrConnecting();
         }
         return false;
@@ -96,7 +96,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.movie_filter, menu);
         MenuItem menuItem = menu.getItem(mCurrentItemIndex);
-        if(null != getSupportActionBar()){
+        if (null != getSupportActionBar()) {
             getSupportActionBar().setSubtitle(menuItem.getTitle());
         }
         lastSelectedItemId = menuItem.getItemId();
@@ -105,10 +105,10 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(lastSelectedItemId == item.getItemId()){
+        if (lastSelectedItemId == item.getItemId()) {
             return false;
         }
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.most_popular:
                 mCurrentApiUrl = MoviesDataLoader.API_URL_POPULAR;
                 mCurrentItemIndex = 0;
@@ -122,7 +122,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
 
         movieRecyclerView.smoothScrollToPosition(0);
-        if(null != getSupportActionBar()){
+        if (null != getSupportActionBar()) {
             getSupportActionBar().setSubtitle(item.getTitle());
         }
         lastSelectedItemId = item.getItemId();

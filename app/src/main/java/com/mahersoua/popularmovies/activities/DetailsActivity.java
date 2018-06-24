@@ -3,6 +3,7 @@ package com.mahersoua.popularmovies.activities;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -20,15 +21,15 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        if(null!= getIntent().getExtras()){
+        if (null != getIntent().getExtras()) {
             Parcelable parcelable = getIntent().getExtras().getParcelable(MovieCatalogAdapter.MOVIE_EXTRAS);
-            MovieModel  movieModel = (MovieModel) parcelable;
+            MovieModel movieModel = (MovieModel) parcelable;
             TextView movieNameTv = findViewById(R.id.movieName);
             RatingBar ratingBar = findViewById(R.id.ratingBar);
             TextView releaseDate = findViewById(R.id.releaseDate);
             TextView synopsisTv = findViewById(R.id.synopsisTv);
 
-            if(null!= movieModel){
+            if (null != movieModel) {
                 movieNameTv.setText(movieModel.getTitle());
                 ratingBar.setRating(movieModel.getVoteAverage());
                 releaseDate.setText(movieModel.getReleaseDate());
@@ -36,10 +37,10 @@ public class DetailsActivity extends AppCompatActivity {
 
                 ImageView posterContainer = findViewById(R.id.detailsPosterContainer);
                 String URL = getString(R.string.image_url).replace("size", "w500");
-                Picasso.get().load(URL +movieModel.getPosterPath()).into(posterContainer);
+                Log.d("DetailsActivity", URL);
+                Picasso.get().load(URL + movieModel.getPosterPath()).into(posterContainer);
             }
         }
-
 
 
     }

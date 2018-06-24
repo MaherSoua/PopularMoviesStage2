@@ -26,8 +26,8 @@ import javax.net.ssl.HttpsURLConnection;
 public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObject> {
     private static final String TAG = "MoviesDataLoader";
     private static final String API_KEY = BuildConfig.API_KEY;
-    public static final String API_URL_POPULAR = "https://api.themoviedb.org/3/movie/popular?api_key="+API_KEY+"&language=en-US&page=1";
-    public static final String API_URL_HIGHEST_RATED = "https://api.themoviedb.org/3/movie/top_rated?api_key="+API_KEY+"&language=en-US&page=1";
+    public static final String API_URL_POPULAR = "https://api.themoviedb.org/3/movie/popular?api_key=" + API_KEY + "&language=en-US&page=1";
+    public static final String API_URL_HIGHEST_RATED = "https://api.themoviedb.org/3/movie/top_rated?api_key=" + API_KEY + "&language=en-US&page=1";
     public static final String DEFAULT_URL = API_URL_POPULAR;
 
     private static String mCurrentUrl;
@@ -36,24 +36,24 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     private boolean isLoaderInit = false;
 
 
-    public static MoviesDataLoader getInstance(){
-        if(mInstance == null){
+    public static MoviesDataLoader getInstance() {
+        if (mInstance == null) {
             mInstance = new MoviesDataLoader();
         }
         return mInstance;
     }
 
-    public void requestMovieList(AppCompatActivity activity, String url){
+    public void requestMovieList(AppCompatActivity activity, String url) {
         mActivity = activity;
         mCurrentUrl = url;
         int LOADER_ID = 11;
-        if(!isLoaderInit){
-            mActivity.getSupportLoaderManager().initLoader(LOADER_ID, null , this);
+        if (!isLoaderInit) {
+            mActivity.getSupportLoaderManager().initLoader(LOADER_ID, null, this);
             isLoaderInit = true;
         } else {
-            mActivity.getSupportLoaderManager().restartLoader(LOADER_ID, null , this);
+            mActivity.getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         }
-        ((IMoviesCallback)mActivity).onStartLoading();
+        ((IMoviesCallback) mActivity).onStartLoading();
     }
 
     @NonNull
@@ -61,47 +61,49 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle args) {
         return new AsyncTaskLoader(mActivity) {
             String mMovieResponse = null;
+
             @Override
             protected void onStartLoading() {
-                if(mMovieResponse == null){
+                if (mMovieResponse == null) {
                     forceLoad();
                 } else {
                     deliverResult(mMovieResponse);
                 }
             }
+
             @Nullable
             @Override
             public JSONObject loadInBackground() {
                 HttpsURLConnection connection;
                 JSONObject responseObject = null;
-               try {
+                try {
                     URL url = new URL(mCurrentUrl);
                     connection = (HttpsURLConnection) url.openConnection();
                     connection.connect();
 
                     int responseCode = connection.getResponseCode();
-                    if(responseCode != HttpsURLConnection.HTTP_OK){
-                        throw new IOException("HTTP code error: "+responseCode);
+                    if (responseCode != HttpsURLConnection.HTTP_OK) {
+                        throw new IOException("HTTP code error: " + responseCode);
                     }
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
                     StringBuilder stringBuilder = new StringBuilder();
                     String readLine;
-                    while ((readLine = bufferedReader.readLine()) != null){
+                    while ((readLine = bufferedReader.readLine()) != null) {
                         stringBuilder.append(readLine);
                     }
 
                     responseObject = new JSONObject(stringBuilder.toString());
                 } catch (MalformedURLException e) {
                     Log.d(TAG, "Malformed Url");
-                } catch (IOException exception){
-                    Log.d(TAG , exception.getMessage());
-                } catch (JSONException exception){
-                   Log.d(TAG , exception.getMessage());
-               }
+                } catch (IOException exception) {
+                    Log.d(TAG, exception.getMessage());
+                } catch (JSONException exception) {
+                    Log.d(TAG, exception.getMessage());
+                }
                 return responseObject;
             }
 
-            private void deliverResult(String data){
+            private void deliverResult(String data) {
                 mMovieResponse = data;
                 super.deliverResult(data);
             }
@@ -110,12 +112,12 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
 
     @Override
     public void onLoadFinished(@NonNull Loader loader, JSONObject data) {
-        try{
-            if(data != null){
-                ((IMoviesCallback)mActivity).onLoadFinished(data.getJSONArray("results"));
+        try {
+            if (data != null) {
+                ((IMoviesCallback) mActivity).onLoadFinished(data.getJSONArray("results"));
             }
-        } catch (JSONException exception){
-            ((IMoviesCallback)mActivity).onLoadError(exception.getMessage());
+        } catch (JSONException exception) {
+            ((IMoviesCallback) mActivity).onLoadError(exception.getMessage());
         }
     }
 
@@ -126,7 +128,9 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
 
     public interface IMoviesCallback {
         void onLoadFinished(JSONArray jsonArray);
+
         void onStartLoading();
+
         void onLoadError(String error);
     }
 }
