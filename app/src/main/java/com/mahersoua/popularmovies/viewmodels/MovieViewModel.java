@@ -20,11 +20,13 @@ public class MovieViewModel extends AndroidViewModel {
         mMovieList = mRepository.getAllMovieList();
     }
 
-    public LiveData<List<MovieModel>> getmMovieList() {
+    public LiveData<List<MovieModel>> getMovieList() {
         return mMovieList;
     }
 
     public void insert(MovieModel movie){
         mRepository.insert(movie);
     }
+    public void delete(MovieModel movie) { mRepository.delete(movie);}
+    public void findById(MovieModel movie) { mRepository.findFavMovieById(movie);}
 }

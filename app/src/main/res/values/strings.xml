@@ -8,4 +8,5 @@
     <string name="details_poster_container_cd">Details Poster Container</string>
     <string name="access_internet_error">Sorry, but your app don\'t have internet access :(</string>
     <string name="image_url">http://image.tmdb.org/t/p/size/</string>
+    <string name="my_favorites">My Favorites</string>
 </resources>

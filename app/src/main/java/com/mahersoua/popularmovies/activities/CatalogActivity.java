@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
     private final String MENU_ITEM_INDEX = "menu_item_selected_index";
     private final String API_URL = "api_url";
     private MovieViewModel mMovieViewModel;
+    private List<MovieModel> mFavList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +47,12 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
 
         //
         mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
-        mMovieViewModel.getmMovieList().observe(this, new Observer<List<MovieModel>>() {
+        mMovieViewModel.getMovieList().observe(this, new Observer<List<MovieModel>>() {
             @Override
             public void onChanged(@Nullable List<MovieModel> movieList) {
-                movieCatalogAdapter.updateList(movieList);
+                mFavList = movieList;
             }
         });
-
         //
 
         if (hasInternetAccess()) {
@@ -75,13 +76,16 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         movieRecyclerView.setAdapter(movieCatalogAdapter);
 
         mCurrentApiUrl = MoviesDataLoader.DEFAULT_URL;
-
         if (savedInstanceState == null) {
-            MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+            if(mCurrentItemIndex < 2){
+                MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+            }
         } else {
             mCurrentApiUrl = savedInstanceState.getString(API_URL, MoviesDataLoader.DEFAULT_URL);
             mCurrentItemIndex = savedInstanceState.getInt(MENU_ITEM_INDEX, 0);
-            MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+            if(mCurrentItemIndex < 2){
+                MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+            }
             movieRecyclerView.smoothScrollToPosition(0);
         }
     }
@@ -97,7 +101,11 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
 
     @Override
     public void onLoadFinished(JSONArray jsonArray) {
-        movieCatalogAdapter.updateList(JsonUtils.getMoviesArray(jsonArray));
+        if(mCurrentItemIndex < 2){
+            movieCatalogAdapter.updateList(JsonUtils.getMoviesArray(jsonArray));
+        } else {
+            movieCatalogAdapter.updateList(mFavList);
+        }
         findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
     }
 
@@ -119,6 +127,8 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
             getSupportActionBar().setSubtitle(menuItem.getTitle());
         }
         lastSelectedItemId = menuItem.getItemId();
+        Log.d("CatalogActivity" , ""+mCurrentItemIndex);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -127,6 +137,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         if (lastSelectedItemId == item.getItemId()) {
             return false;
         }
+
         switch (item.getItemId()) {
             case R.id.most_popular:
                 mCurrentApiUrl = MoviesDataLoader.API_URL_POPULAR;
@@ -137,8 +148,16 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
                 mCurrentApiUrl = MoviesDataLoader.API_URL_HIGHEST_RATED;
                 mCurrentItemIndex = 1;
                 break;
+
+            case R.id.favorites:
+                movieCatalogAdapter.updateList(mFavList);
+                mCurrentItemIndex = 2;
+                break;
         }
-        MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+
+        if(mCurrentItemIndex < 2){
+            MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+        }
 
         movieRecyclerView.smoothScrollToPosition(0);
         if (null != getSupportActionBar()) {

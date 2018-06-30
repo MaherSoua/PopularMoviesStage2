@@ -13,5 +13,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.mahersoua.popularmovies.R.layout.activity_main);
         startActivity(new Intent(this, CatalogActivity.class));
+        finish();
     }
 }

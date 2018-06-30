@@ -16,14 +16,6 @@ public abstract class MovieRoomDatabase extends RoomDatabase {
     static MovieRoomDatabase sInstance;
     public abstract MovieDao movieDao();
 
-    private static RoomDatabase.Callback sRoomDatabaseCallback =
-            new RoomDatabase.Callback() {
-                @Override
-                public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                    super.onOpen(db);
-                    new PopulateDbAsync(sInstance);
-                }
-            };
 
     public static MovieRoomDatabase getInstance(final Context context){
         if(sInstance == null){
@@ -32,24 +24,10 @@ public abstract class MovieRoomDatabase extends RoomDatabase {
                     sInstance = Room.databaseBuilder(context.getApplicationContext() ,
                             MovieRoomDatabase.class ,
                             "movie_database")
-                            .addCallback(sRoomDatabaseCallback)
                             .build();
                 }
             }
         }
         return sInstance;
-    }
-
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-        private final MovieDao mDao;
-        public PopulateDbAsync(MovieRoomDatabase db) {
-            mDao = db.movieDao();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            mDao.deleteAll();
-            return null;
-        }
     }
 }
