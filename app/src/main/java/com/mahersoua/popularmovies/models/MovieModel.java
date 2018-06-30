@@ -1,43 +1,70 @@
 package com.mahersoua.popularmovies.models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public class MovieModel implements Parcelable {
-    private String homePage;
-    private String backdropPath;
-    private String imdbId;
-    private String originalLanguage;
-    private String originalTitle;
-    private String overview;
-    private String posterPath;
-    private String releaseDate;
-    private String status;
-    private String tagline;
+@Entity(tableName = "movie_table")
+public class MovieModel implements Parcelable{
+    @NonNull
+    @ColumnInfo(name = "movie_name")
     private String title;
-    private int[] genreIds;
-    private List<GenreModel> genres;
-    private List<MovieCollectionModel> belongsToCollection;
-    private List<ProductionCompaniesModel> productionCompanies;
-    private List<ProductionCountryModel> productionCountries;
-    private List<SpokenLanguageModel> spokenLanguages;
-    private boolean isAdult;
-    private boolean isVideo;
-    private float budget;
-    private float revenue;
-    private Double popularity;
-    private float voteAverage;
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
     private int id;
+
+    @ColumnInfo(name = "home_page")
+    private String homePage;
+    @ColumnInfo(name = "backdrop_path")
+    private String backdropPath;
+    @ColumnInfo(name = "imdb_id")
+    private String imdbId;
+    @ColumnInfo(name = "original_language")
+    private String originalLanguage;
+    @ColumnInfo(name = "original_title")
+    private String originalTitle;
+    @ColumnInfo(name = "overview")
+    private String overview;
+    @ColumnInfo(name = "poster_path")
+    private String posterPath;
+    @ColumnInfo(name = "release_date")
+    private String releaseDate;
+    @ColumnInfo(name = "status")
+    private String status;
+    @ColumnInfo(name = "tagline")
+    private String tagline;
+
+    @ColumnInfo(name = "is_adult")
+    private boolean isAdult;
+    @ColumnInfo(name = "is_video")
+    private boolean isVideo;
+    @ColumnInfo(name = "budget")
+    private float budget;
+    @ColumnInfo(name = "revenue")
+    private float revenue;
+    @ColumnInfo(name = "popularity")
+    private Double popularity;
+    @ColumnInfo(name = "vote_average")
+    private float voteAverage;
+    @ColumnInfo(name = "runtime")
     private int runtime;
+    @ColumnInfo(name = "vote_count")
     private int voteCount;
 
     public MovieModel(){
 
     }
 
-    private MovieModel(Parcel in) {
+    protected MovieModel(Parcel in) {
+        title = in.readString();
+        id = in.readInt();
         homePage = in.readString();
         backdropPath = in.readString();
         imdbId = in.readString();
@@ -48,15 +75,16 @@ public class MovieModel implements Parcelable {
         releaseDate = in.readString();
         status = in.readString();
         tagline = in.readString();
-        title = in.readString();
-        genreIds = in.createIntArray();
         isAdult = in.readByte() != 0;
         isVideo = in.readByte() != 0;
         budget = in.readFloat();
         revenue = in.readFloat();
-        popularity = in.readDouble();
+        if (in.readByte() == 0) {
+            popularity = null;
+        } else {
+            popularity = in.readDouble();
+        }
         voteAverage = in.readFloat();
-        id = in.readInt();
         runtime = in.readInt();
         voteCount = in.readInt();
     }
@@ -72,6 +100,24 @@ public class MovieModel implements Parcelable {
             return new MovieModel[size];
         }
     };
+
+    @NonNull
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(@NonNull String title) {
+        this.title = title;
+    }
+
+    @NonNull
+    public int getId() {
+        return id;
+    }
+
+    public void setId(@NonNull int id) {
+        this.id = id;
+    }
 
     public String getHomePage() {
         return homePage;
@@ -153,62 +199,6 @@ public class MovieModel implements Parcelable {
         this.tagline = tagline;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int[] getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(int[] genreIds) {
-        this.genreIds = genreIds;
-    }
-
-    public List<GenreModel> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(List<GenreModel> genres) {
-        this.genres = genres;
-    }
-
-    public List<MovieCollectionModel> getBelongsToCollection() {
-        return belongsToCollection;
-    }
-
-    public void setBelongsToCollection(List<MovieCollectionModel> belongsToCollection) {
-        this.belongsToCollection = belongsToCollection;
-    }
-
-    public List<ProductionCompaniesModel> getProductionCompanies() {
-        return productionCompanies;
-    }
-
-    public void setProductionCompanies(List<ProductionCompaniesModel> productionCompanies) {
-        this.productionCompanies = productionCompanies;
-    }
-
-    public List<ProductionCountryModel> getProductionCountries() {
-        return productionCountries;
-    }
-
-    public void setProductionCountries(List<ProductionCountryModel> productionCountries) {
-        this.productionCountries = productionCountries;
-    }
-
-    public List<SpokenLanguageModel> getSpokenLanguages() {
-        return spokenLanguages;
-    }
-
-    public void setSpokenLanguages(List<SpokenLanguageModel> spokenLanguages) {
-        this.spokenLanguages = spokenLanguages;
-    }
-
     public boolean isAdult() {
         return isAdult;
     }
@@ -257,14 +247,6 @@ public class MovieModel implements Parcelable {
         this.voteAverage = voteAverage;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getRuntime() {
         return runtime;
     }
@@ -288,6 +270,8 @@ public class MovieModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeInt(id);
         dest.writeString(homePage);
         dest.writeString(backdropPath);
         dest.writeString(imdbId);
@@ -298,15 +282,17 @@ public class MovieModel implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeString(status);
         dest.writeString(tagline);
-        dest.writeString(title);
-        dest.writeIntArray(genreIds);
         dest.writeByte((byte) (isAdult ? 1 : 0));
         dest.writeByte((byte) (isVideo ? 1 : 0));
         dest.writeFloat(budget);
         dest.writeFloat(revenue);
-        dest.writeDouble(popularity);
+        if (popularity == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(popularity);
+        }
         dest.writeFloat(voteAverage);
-        dest.writeInt(id);
         dest.writeInt(runtime);
         dest.writeInt(voteCount);
     }

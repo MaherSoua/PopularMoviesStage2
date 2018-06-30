@@ -40,7 +40,7 @@ public class JsonUtils {
                 for(int j = 0; j < genreIdsObj.length(); j++){
                     genreIds[j] = genreIdsObj.getInt(j);
                 }
-                movieModel.setGenreIds(genreIds);
+//                movieModel.setGenreIds(genreIds);
 
                 movieModelList.add(movieModel);
             }

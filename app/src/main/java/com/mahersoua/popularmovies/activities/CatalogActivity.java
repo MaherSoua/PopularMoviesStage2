@@ -1,9 +1,12 @@
 package com.mahersoua.popularmovies.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,10 +17,14 @@ import android.view.View;
 
 import com.mahersoua.popularmovies.R;
 import com.mahersoua.popularmovies.adapters.MovieCatalogAdapter;
+import com.mahersoua.popularmovies.models.MovieModel;
 import com.mahersoua.popularmovies.utils.JsonUtils;
 import com.mahersoua.popularmovies.data.MoviesDataLoader;
+import com.mahersoua.popularmovies.viewmodels.MovieViewModel;
 
 import org.json.JSONArray;
+
+import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity implements MoviesDataLoader.IMoviesCallback {
 
@@ -28,12 +35,24 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
     private int mCurrentItemIndex = 0;
     private final String MENU_ITEM_INDEX = "menu_item_selected_index";
     private final String API_URL = "api_url";
+    private MovieViewModel mMovieViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
         movieRecyclerView = findViewById(R.id.listContainer);
+
+        //
+        mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+        mMovieViewModel.getmMovieList().observe(this, new Observer<List<MovieModel>>() {
+            @Override
+            public void onChanged(@Nullable List<MovieModel> movieList) {
+                movieCatalogAdapter.updateList(movieList);
+            }
+        });
+
+        //
 
         if (hasInternetAccess()) {
             findViewById(R.id.connectionErrorTv).setVisibility(View.VISIBLE);
