@@ -2,29 +2,43 @@ package com.mahersoua.popularmovies.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.mahersoua.popularmovies.R;
 import com.mahersoua.popularmovies.adapters.MovieCatalogAdapter;
+import com.mahersoua.popularmovies.data.MoviesDataLoader;
 import com.mahersoua.popularmovies.models.MovieModel;
+import com.mahersoua.popularmovies.models.MovieReviewModel;
+import com.mahersoua.popularmovies.models.MovieTrailerInfo;
+import com.mahersoua.popularmovies.utils.JsonUtils;
 import com.mahersoua.popularmovies.viewmodels.MovieViewModel;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+
 import java.util.List;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements View.OnClickListener , MoviesDataLoader.IMoviesCallback {
 
     private MovieViewModel mMovieViewModel;
+    private MovieModel mMovieModel;
+    private int mCurrentSelectedBtnId;
 
 
     @Override
@@ -34,43 +48,39 @@ public class DetailsActivity extends AppCompatActivity {
 
         if (null != getIntent().getExtras()) {
             Parcelable parcelable = getIntent().getExtras().getParcelable(MovieCatalogAdapter.MOVIE_EXTRAS);
-            final MovieModel movieModel = (MovieModel) parcelable;
+            mMovieModel = (MovieModel) parcelable;
 
             TextView movieNameTv = findViewById(R.id.movieName);
             RatingBar ratingBar = findViewById(R.id.ratingBar);
             TextView releaseDate = findViewById(R.id.releaseDate);
             TextView synopsisTv = findViewById(R.id.synopsisTv);
-            CheckBox mFavMovieBtn = findViewById(R.id.favButton);
+            CheckBox favMovieBtn = findViewById(R.id.favButton);
+            Button trailerBtn = findViewById(R.id.trailerButton);
+            Button reviewBtn = findViewById(R.id.reviewButton);
+
 
             mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
             mMovieViewModel.getMovieList().observe(this, new Observer<List<MovieModel>>() {
                 @Override
                 public void onChanged(@Nullable List<MovieModel> movieList) {
-                    if(isFav(movieList, movieModel.getId())){
-                        mFavMovieBtn.setChecked(true);
+                    if(isFav(movieList, mMovieModel.getId())){
+                        favMovieBtn.setChecked(true);
                     }
                 }
             });
 
-            if (null != movieModel) {
-                movieNameTv.setText(movieModel.getTitle());
-                ratingBar.setRating(movieModel.getVoteAverage());
-                releaseDate.setText(movieModel.getReleaseDate());
-                synopsisTv.setText(movieModel.getOverview());
+            if (null != mMovieModel) {
+                movieNameTv.setText(mMovieModel.getTitle());
+                ratingBar.setRating(mMovieModel.getVoteAverage());
+                releaseDate.setText(mMovieModel.getReleaseDate());
+                synopsisTv.setText(mMovieModel.getOverview());
 
                 ImageView posterContainer = findViewById(R.id.detailsPosterContainer);
                 String URL = getString(R.string.image_url).replace("size", "w500");
-                Picasso.get().load(URL + movieModel.getPosterPath()).into(posterContainer);
-                mFavMovieBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(((CheckBox)v).isChecked()){
-                            mMovieViewModel.insert(movieModel);
-                        } else {
-                            mMovieViewModel.delete(movieModel);
-                        }
-                    }
-                });
+                Picasso.get().load(URL + mMovieModel.getPosterPath()).into(posterContainer);
+                favMovieBtn.setOnClickListener(this);
+                trailerBtn.setOnClickListener(this);
+                reviewBtn.setOnClickListener(this);
             }
         }
     }
@@ -82,5 +92,74 @@ public class DetailsActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.favButton:
+                if(((CheckBox)v).isChecked()){
+                    mMovieViewModel.insert(mMovieModel);
+                } else {
+                    mMovieViewModel.delete(mMovieModel);
+                }
+                break;
+
+            case R.id.trailerButton:
+                MoviesDataLoader.getInstance().requestMovieList(this, MoviesDataLoader.getVideoUrl(mMovieModel.getId()));
+                break;
+
+            case R.id.reviewButton:
+                MoviesDataLoader.getInstance().requestMovieList(this, MoviesDataLoader.getReviewUrl(mMovieModel.getId()));
+                break;
+        }
+        mCurrentSelectedBtnId = v.getId();
+    }
+
+    @Override
+    public void onLoadFinished(JSONArray jsonArray) {
+
+        switch (mCurrentSelectedBtnId){
+            case R.id.trailerButton:
+                List<MovieTrailerInfo> movieTrailerInfos = JsonUtils.getMovieTrailerInfo(jsonArray);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                String[] movieTrailerTypes = new String[movieTrailerInfos.size()];
+                for(int i = 0 ; i < movieTrailerInfos.size(); i++){
+                    movieTrailerTypes[i] = "Trailer "+ (i + 1 )+" (" +movieTrailerInfos.get(i).getSite()+")";
+                }
+
+                builder.setTitle("Choose your site to launch trailer")
+                        .setItems(movieTrailerTypes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                MovieTrailerInfo movieTrailerInfo = movieTrailerInfos.get(which);
+
+                                String url = "";
+                                if(movieTrailerInfo.getSite().equals("YouTube")){
+                                    url = "https://www.youtube.com/watch?v="+movieTrailerInfo.getKey();
+                                }
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse(url));
+                                startActivity(intent);
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                break;
+            case R.id.reviewButton:
+                List<MovieReviewModel> movieReviewList = JsonUtils.getMovieReviews(jsonArray);
+                break;
+        }
+    }
+
+    @Override
+    public void onStartLoading() {
+
+    }
+
+    @Override
+    public void onLoadError(String error) {
+
     }
 }

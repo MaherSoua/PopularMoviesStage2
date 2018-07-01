@@ -102,10 +102,30 @@
             android:id="@+id/favButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Add To Favorites"
+            android:button="@drawable/favorite_background"
             app:layout_constraintStart_toStartOf="@+id/ratingBar"
-            app:layout_constraintTop_toBottomOf="@+id/ratingBar"
-            android:button="@drawable/favorite_background" />
+            app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
+        <Button
+            android:id="@+id/reviewButton"
+            android:layout_width="206dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            android:text="Read Review"
+            app:layout_constraintStart_toStartOf="@+id/favButton"
+            app:layout_constraintTop_toBottomOf="@+id/favButton" />
+
+        <Button
+            android:id="@+id/trailerButton"
+            android:layout_width="206dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="4dp"
+            android:drawableLeft="@drawable/ic_play_circle_outline_black_24dp"
+            android:text="Play Trailer"
+            app:layout_constraintStart_toStartOf="@+id/reviewButton"
+            app:layout_constraintTop_toBottomOf="@+id/reviewButton" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

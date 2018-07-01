@@ -3,6 +3,8 @@ package com.mahersoua.popularmovies.utils;
 import android.util.Log;
 
 import com.mahersoua.popularmovies.models.MovieModel;
+import com.mahersoua.popularmovies.models.MovieReviewModel;
+import com.mahersoua.popularmovies.models.MovieTrailerInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,13 +37,6 @@ public class JsonUtils {
                 movieModel.setVideo(jsonItem.getBoolean("video"));
                 movieModel.setPopularity(jsonItem.getDouble("popularity"));
 
-                JSONArray genreIdsObj = jsonItem.getJSONArray("genre_ids");
-                int[] genreIds = new int[genreIdsObj.length()];
-                for(int j = 0; j < genreIdsObj.length(); j++){
-                    genreIds[j] = genreIdsObj.getInt(j);
-                }
-//                movieModel.setGenreIds(genreIds);
-
                 movieModelList.add(movieModel);
             }
         } catch (JSONException error){
@@ -50,5 +45,47 @@ public class JsonUtils {
 
         Log.d(TAG , ""+movieModelList.size());
         return movieModelList;
+    }
+
+    public static List<MovieTrailerInfo> getMovieTrailerInfo(JSONArray jsonArray){
+        List<MovieTrailerInfo> movieReviewList = new ArrayList<>();
+
+        try {
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonItem =  jsonArray.getJSONObject(i);
+                MovieTrailerInfo movieTrailerInfo = new MovieTrailerInfo();
+                movieTrailerInfo.setId(jsonItem.getString("id"));
+                movieTrailerInfo.setKey(jsonItem.getString("key"));
+                movieTrailerInfo.setName(jsonItem.getString("name"));
+                movieTrailerInfo.setSite(jsonItem.getString("site"));
+                movieTrailerInfo.setSize(jsonItem.getInt("size"));
+                movieTrailerInfo.setType(jsonItem.getString("type"));
+
+                movieReviewList.add(movieTrailerInfo);
+            }
+        } catch (JSONException error){
+            Log.d(TAG , "getMovieTrailerInfo : "+error.getMessage());
+        }
+        return movieReviewList;
+    }
+
+    public static List< MovieReviewModel > getMovieReviews(JSONArray jsonArray){
+        List<MovieReviewModel> movieReviewList = new ArrayList<>();
+
+        try {
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonItem =  jsonArray.getJSONObject(i);
+                MovieReviewModel movieReviewModel = new MovieReviewModel();
+                movieReviewModel.setId(jsonItem.getString("id"));
+                movieReviewModel.setContent(jsonItem.getString("content"));
+                movieReviewModel.setAuthor(jsonItem.getString("author"));
+                movieReviewModel.setUrl(jsonItem.getString("url"));
+
+                movieReviewList.add(movieReviewModel);
+            }
+        } catch (JSONException error){
+            Log.d(TAG , "getMovieReviews : "+error.getMessage());
+        }
+        return movieReviewList;
     }
 }

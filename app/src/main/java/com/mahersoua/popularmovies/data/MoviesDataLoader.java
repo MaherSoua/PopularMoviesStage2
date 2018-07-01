@@ -28,6 +28,9 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     private static final String API_KEY = BuildConfig.API_KEY;
     public static final String API_URL_POPULAR = "https://api.themoviedb.org/3/movie/popular?api_key=" + API_KEY + "&language=en-US&page=1";
     public static final String API_URL_HIGHEST_RATED = "https://api.themoviedb.org/3/movie/top_rated?api_key=" + API_KEY + "&language=en-US&page=1";
+    public static final String API_URL_VIDEO_TRAILER = "https://api.themoviedb.org/3/movie/movie_id/videos?api_key=api_key_value&language=en-US";
+    public static final String API_URL_REVIEW = "https://api.themoviedb.org/3/movie/movie_id/reviews?api_key=api_key_value&language=en-US&page=1";
+
     public static final String DEFAULT_URL = API_URL_POPULAR;
 
     private static String mCurrentUrl;
@@ -54,6 +57,14 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
             mActivity.getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         }
         ((IMoviesCallback) mActivity).onStartLoading();
+    }
+
+    public static  String getVideoUrl(int id){
+        return API_URL_VIDEO_TRAILER.replace("api_key_value" , API_KEY).replace("movie_id", ""+id);
+    }
+
+    public static String getReviewUrl(int id){
+        return API_URL_REVIEW.replace("api_key_value", API_KEY).replace("movie_id", ""+id);
     }
 
     @NonNull
