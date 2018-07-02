@@ -36,7 +36,6 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
     private int mCurrentItemIndex = 0;
     private final String MENU_ITEM_INDEX = "menu_item_selected_index";
     private final String API_URL = "api_url";
-    private MovieViewModel mMovieViewModel;
     private List<MovieModel> mFavList;
 
     @Override
@@ -44,10 +43,11 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
         movieRecyclerView = findViewById(R.id.listContainer);
+        MovieViewModel movieViewModel;
 
         //
-        mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
-        mMovieViewModel.getMovieList().observe(this, new Observer<List<MovieModel>>() {
+        movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+        movieViewModel.getMovieList().observe(this, new Observer<List<MovieModel>>() {
             @Override
             public void onChanged(@Nullable List<MovieModel> movieList) {
                 mFavList = movieList;
@@ -127,8 +127,6 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
             getSupportActionBar().setSubtitle(menuItem.getTitle());
         }
         lastSelectedItemId = menuItem.getItemId();
-        Log.d("CatalogActivity" , ""+mCurrentItemIndex);
-
         return super.onCreateOptionsMenu(menu);
     }
 

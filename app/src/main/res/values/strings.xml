@@ -14,4 +14,7 @@
     <string name="video_trailer_url">https://api.themoviedb.org/3/movie/movie_id/videos?api_key=api_key_value&amp;language=en-US</string>
     <string name="video_review_url">https://api.themoviedb.org/3/movie/movie_id/reviews?api_key=api_key_value&amp;language=en-US&amp;page=1</string>
     <string name="alert_movie_overview">Movie Review</string>
+    <string name="ad_to_favorites">Add To Favorites</string>
+    <string name="read_review">Read Review</string>
+    <string name="play_trailer">Play Trailer</string>
 </resources>
