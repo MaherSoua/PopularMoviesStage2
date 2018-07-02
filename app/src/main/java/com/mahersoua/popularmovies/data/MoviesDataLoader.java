@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.mahersoua.popularmovies.BuildConfig;
+import com.mahersoua.popularmovies.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,13 +29,11 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     private static final String API_KEY = BuildConfig.API_KEY;
     public static final String API_URL_POPULAR = "https://api.themoviedb.org/3/movie/popular?api_key=" + API_KEY + "&language=en-US&page=1";
     public static final String API_URL_HIGHEST_RATED = "https://api.themoviedb.org/3/movie/top_rated?api_key=" + API_KEY + "&language=en-US&page=1";
-    public static final String API_URL_VIDEO_TRAILER = "https://api.themoviedb.org/3/movie/movie_id/videos?api_key=api_key_value&language=en-US";
-    public static final String API_URL_REVIEW = "https://api.themoviedb.org/3/movie/movie_id/reviews?api_key=api_key_value&language=en-US&page=1";
 
     public static final String DEFAULT_URL = API_URL_POPULAR;
 
     private static String mCurrentUrl;
-    private AppCompatActivity mActivity = null;
+    private static AppCompatActivity mActivity = null;
     private static MoviesDataLoader mInstance = null;
     private boolean isLoaderInit = false;
 
@@ -60,11 +59,11 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     }
 
     public static  String getVideoUrl(int id){
-        return API_URL_VIDEO_TRAILER.replace("api_key_value" , API_KEY).replace("movie_id", ""+id);
+        return  mActivity.getString(R.string.video_trailer_url).replace("api_key_value" , API_KEY).replace("movie_id", ""+id);
     }
 
     public static String getReviewUrl(int id){
-        return API_URL_REVIEW.replace("api_key_value", API_KEY).replace("movie_id", ""+id);
+        return mActivity.getString(R.string.video_review_url).replace("api_key_value", API_KEY).replace("movie_id", ""+id);
     }
 
     @NonNull

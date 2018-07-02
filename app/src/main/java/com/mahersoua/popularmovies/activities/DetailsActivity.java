@@ -1,5 +1,6 @@
 package com.mahersoua.popularmovies.activities;
 
+import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 
 import com.mahersoua.popularmovies.R;
 import com.mahersoua.popularmovies.adapters.MovieCatalogAdapter;
+import com.mahersoua.popularmovies.adapters.MovieReviewAdapter;
 import com.mahersoua.popularmovies.data.MoviesDataLoader;
 import com.mahersoua.popularmovies.models.MovieModel;
 import com.mahersoua.popularmovies.models.MovieReviewModel;
@@ -32,10 +35,12 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity implements View.OnClickListener , MoviesDataLoader.IMoviesCallback {
 
+    public static String MOVIE_REVIEW_EXTRA = "movie_overview_extra";
     private MovieViewModel mMovieViewModel;
     private MovieModel mMovieModel;
     private int mCurrentSelectedBtnId;
@@ -126,10 +131,12 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
 
                 String[] movieTrailerTypes = new String[movieTrailerInfos.size()];
                 for(int i = 0 ; i < movieTrailerInfos.size(); i++){
-                    movieTrailerTypes[i] = "Trailer "+ (i + 1 )+" (" +movieTrailerInfos.get(i).getSite()+")";
+                    movieTrailerTypes[i] = getString(R.string.alert_item_label)
+                            .replace("item_index", ""+(i + 1 ) )
+                            .replace("item_site", movieTrailerInfos.get(i).getSite());
                 }
 
-                builder.setTitle("Choose your site to launch trailer")
+                builder.setTitle(getString(R.string.alert_trailer_title))
                         .setItems(movieTrailerTypes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 MovieTrailerInfo movieTrailerInfo = movieTrailerInfos.get(which);
@@ -149,8 +156,13 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.reviewButton:
                 List<MovieReviewModel> movieReviewList = JsonUtils.getMovieReviews(jsonArray);
+                Intent intent = new Intent(this, MovieReviewActivity.class);
+                intent.putParcelableArrayListExtra(MOVIE_REVIEW_EXTRA, (ArrayList<? extends Parcelable>) movieReviewList);
+                startActivity(intent);
+                Log.d("DetailsActivity" , "Launch Review ");
                 break;
         }
+        mCurrentSelectedBtnId = 0;
     }
 
     @Override

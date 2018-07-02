@@ -9,4 +9,9 @@
     <string name="access_internet_error">Sorry, but your app don\'t have internet access :(</string>
     <string name="image_url">http://image.tmdb.org/t/p/size/</string>
     <string name="my_favorites">My Favorites</string>
+    <string name="alert_trailer_title">"Choose your trailer"</string>
+    <string name="alert_item_label">"Trailer item_index ( item_site )</string>
+    <string name="video_trailer_url">https://api.themoviedb.org/3/movie/movie_id/videos?api_key=api_key_value&amp;language=en-US</string>
+    <string name="video_review_url">https://api.themoviedb.org/3/movie/movie_id/reviews?api_key=api_key_value&amp;language=en-US&amp;page=1</string>
+    <string name="alert_movie_overview">Movie Review</string>
 </resources>
