@@ -6,21 +6,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.mahersoua.popularmovies.R;
-import com.mahersoua.popularmovies.activities.MovieReviewActivity;
 import com.mahersoua.popularmovies.models.MovieReviewModel;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.MovieReviewHolder> {
 
-    List<MovieReviewModel> mList;
-    Context mContext;
+    private final List<MovieReviewModel> mList;
+    private final Context mContext;
 
     public MovieReviewAdapter(Context context, List<MovieReviewModel> movieReviewModel) {
         mContext = context;
@@ -48,10 +44,10 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
 
     class MovieReviewHolder extends RecyclerView.ViewHolder {
 
-        TextView movieReview;
-        TextView movieReviewAuthor;
+        final TextView movieReview;
+        final TextView movieReviewAuthor;
 
-        public MovieReviewHolder(View itemView) {
+        MovieReviewHolder(View itemView) {
             super(itemView);
             movieReview = itemView.findViewById(R.id.movie_review);
             movieReviewAuthor = itemView.findViewById(R.id.movie_review_author);

@@ -42,8 +42,6 @@ public class JsonUtils {
         } catch (JSONException error){
             Log.d(TAG , ">>>>>>>>> "+error.getMessage());
         }
-
-        Log.d(TAG , ""+movieModelList.size());
         return movieModelList;
     }
 
@@ -62,6 +60,7 @@ public class JsonUtils {
                 movieTrailerInfo.setType(jsonItem.getString("type"));
 
                 movieReviewList.add(movieTrailerInfo);
+
             }
         } catch (JSONException error){
             Log.d(TAG , "getMovieTrailerInfo : "+error.getMessage());
@@ -82,6 +81,7 @@ public class JsonUtils {
                 movieReviewModel.setUrl(jsonItem.getString("url"));
 
                 movieReviewList.add(movieReviewModel);
+
             }
         } catch (JSONException error){
             Log.d(TAG , "getMovieReviews : "+error.getMessage());

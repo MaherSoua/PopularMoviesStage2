@@ -14,7 +14,7 @@ public class MovieReviewModel implements Parcelable {
 
     }
 
-    protected MovieReviewModel(Parcel in) {
+    private MovieReviewModel(Parcel in) {
         id = in.readString();
         content = in.readString();
         author = in.readString();

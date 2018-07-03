@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,15 +53,6 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
             }
         });
         //
-
-        if (hasInternetAccess()) {
-            findViewById(R.id.connectionErrorTv).setVisibility(View.VISIBLE);
-            findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-            return;
-        } else {
-            findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
-        }
-
         int spanCount;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             spanCount = 2;
@@ -74,6 +64,14 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         movieRecyclerView.setLayoutManager(recyclerViewLayoutManager);
         movieCatalogAdapter = new MovieCatalogAdapter(this, null);
         movieRecyclerView.setAdapter(movieCatalogAdapter);
+
+        if (hasInternetAccess()) {
+            findViewById(R.id.connectionErrorTv).setVisibility(View.VISIBLE);
+            findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+            return;
+        } else {
+            findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
+        }
 
         mCurrentApiUrl = MoviesDataLoader.DEFAULT_URL;
         if (savedInstanceState == null) {
@@ -106,6 +104,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         } else {
             movieCatalogAdapter.updateList(mFavList);
         }
+        findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
         findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
     }
 
@@ -116,7 +115,13 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
 
     @Override
     public void onLoadError(String error) {
-
+        if(mCurrentItemIndex  < 2){
+            movieCatalogAdapter.updateList(null);
+            findViewById(R.id.connectionErrorTv).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
+        }
+        findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -149,6 +154,10 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
 
             case R.id.favorites:
                 movieCatalogAdapter.updateList(mFavList);
+                if(mFavList.size() > 0){
+                    findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                }
                 mCurrentItemIndex = 2;
                 break;
         }

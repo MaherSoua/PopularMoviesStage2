@@ -33,7 +33,7 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     public static final String DEFAULT_URL = API_URL_POPULAR;
 
     private static String mCurrentUrl;
-    private static AppCompatActivity mActivity = null;
+    private AppCompatActivity mActivity = null;
     private static MoviesDataLoader mInstance = null;
     private boolean isLoaderInit = false;
 
@@ -45,10 +45,15 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
         return mInstance;
     }
 
+    private AppCompatActivity getActivity(){
+        return mActivity;
+    }
+
     public void requestMovieList(AppCompatActivity activity, String url) {
         mActivity = activity;
         mCurrentUrl = url;
         int LOADER_ID = 11;
+
         if (!isLoaderInit) {
             mActivity.getSupportLoaderManager().initLoader(LOADER_ID, null, this);
             isLoaderInit = true;
@@ -59,11 +64,11 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
     }
 
     public static  String getVideoUrl(int id){
-        return  mActivity.getString(R.string.video_trailer_url).replace("api_key_value" , API_KEY).replace("movie_id", ""+id);
+        return mInstance.getActivity().getString(R.string.video_trailer_url).replace("api_key_value" , API_KEY).replace("movie_id", ""+id);
     }
 
     public static String getReviewUrl(int id){
-        return mActivity.getString(R.string.video_review_url).replace("api_key_value", API_KEY).replace("movie_id", ""+id);
+        return mInstance.getActivity().getString(R.string.video_review_url).replace("api_key_value", API_KEY).replace("movie_id", ""+id);
     }
 
     @NonNull
@@ -103,12 +108,12 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
                     }
 
                     responseObject = new JSONObject(stringBuilder.toString());
-                } catch (MalformedURLException e) {
-                    Log.d(TAG, "Malformed Url");
+                } catch (MalformedURLException exception) {
+                    Log.d(TAG, "Malformed Url "+exception.getMessage());
                 } catch (IOException exception) {
-                    Log.d(TAG, exception.getMessage());
+                    Log.d(TAG, "IOException " +exception.getMessage());
                 } catch (JSONException exception) {
-                    Log.d(TAG, exception.getMessage());
+                    Log.d(TAG, "JSONException "+exception.getMessage());
                 }
                 return responseObject;
             }
@@ -125,6 +130,8 @@ public class MoviesDataLoader implements LoaderManager.LoaderCallbacks<JSONObjec
         try {
             if (data != null) {
                 ((IMoviesCallback) mActivity).onLoadFinished(data.getJSONArray("results"));
+            } else {
+                ((IMoviesCallback) mActivity).onLoadError(null);
             }
         } catch (JSONException exception) {
             ((IMoviesCallback) mActivity).onLoadError(exception.getMessage());

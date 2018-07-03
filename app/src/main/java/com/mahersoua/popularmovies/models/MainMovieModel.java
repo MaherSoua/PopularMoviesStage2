@@ -2,7 +2,7 @@ package com.mahersoua.popularmovies.models;
 
 import java.util.List;
 
-public class MainMovieModel {
+class MainMovieModel {
 
     private int[] genreIds;
     private List<GenreModel> genres;

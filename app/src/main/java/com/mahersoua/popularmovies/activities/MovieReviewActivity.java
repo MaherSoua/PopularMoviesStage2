@@ -1,18 +1,12 @@
 package com.mahersoua.popularmovies.activities;
 
-import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.mahersoua.popularmovies.R;
-import com.mahersoua.popularmovies.adapters.MovieCatalogAdapter;
 import com.mahersoua.popularmovies.adapters.MovieReviewAdapter;
-import com.mahersoua.popularmovies.models.MovieModel;
 import com.mahersoua.popularmovies.models.MovieReviewModel;
 
 import java.util.List;

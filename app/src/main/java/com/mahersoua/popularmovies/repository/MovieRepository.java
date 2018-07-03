@@ -3,7 +3,6 @@ package com.mahersoua.popularmovies.repository;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.mahersoua.popularmovies.dao.MovieDao;
 import com.mahersoua.popularmovies.database.MovieRoomDatabase;
@@ -12,8 +11,8 @@ import com.mahersoua.popularmovies.models.MovieModel;
 import java.util.List;
 
 public class MovieRepository {
-    private MovieDao mMovieDao;
-    private LiveData<List<MovieModel>> mFavMovieList;
+    private final MovieDao mMovieDao;
+    private final LiveData<List<MovieModel>> mFavMovieList;
     private String mCurrentQueryType;
 
     public MovieRepository(Application application){
@@ -41,9 +40,9 @@ public class MovieRepository {
     }
 
     private class InsertAsyncTask extends AsyncTask<MovieModel, Void, Void> {
-        private MovieDao  mAsyncTaskDao;
+        private final MovieDao  mAsyncTaskDao;
         private String mIsInsertion;
-        public InsertAsyncTask(MovieDao movieDao) {
+        InsertAsyncTask(MovieDao movieDao) {
             mAsyncTaskDao = movieDao;
         }
 

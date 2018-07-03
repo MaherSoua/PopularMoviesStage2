@@ -1,12 +1,9 @@
 package com.mahersoua.popularmovies.activities;
 
-import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -14,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,7 +20,6 @@ import android.widget.TextView;
 
 import com.mahersoua.popularmovies.R;
 import com.mahersoua.popularmovies.adapters.MovieCatalogAdapter;
-import com.mahersoua.popularmovies.adapters.MovieReviewAdapter;
 import com.mahersoua.popularmovies.data.MoviesDataLoader;
 import com.mahersoua.popularmovies.models.MovieModel;
 import com.mahersoua.popularmovies.models.MovieReviewModel;
@@ -40,7 +35,7 @@ import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity implements View.OnClickListener , MoviesDataLoader.IMoviesCallback {
 
-    public static String MOVIE_REVIEW_EXTRA = "movie_overview_extra";
+    public static final String MOVIE_REVIEW_EXTRA = "movie_overview_extra";
     private MovieViewModel mMovieViewModel;
     private MovieModel mMovieModel;
     private int mCurrentSelectedBtnId;
@@ -90,7 +85,7 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public boolean isFav(final List<MovieModel> list, final int id){
+    private boolean isFav(final List<MovieModel> list, final int id){
         for( MovieModel movieModel : list){
             if(movieModel.getId() ==  id){
                 return true;

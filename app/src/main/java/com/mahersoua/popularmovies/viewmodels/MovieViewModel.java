@@ -11,8 +11,8 @@ import com.mahersoua.popularmovies.repository.MovieRepository;
 import java.util.List;
 
 public class MovieViewModel extends AndroidViewModel {
-    private MovieRepository mRepository;
-    private LiveData<List<MovieModel>> mMovieList;
+    private final MovieRepository mRepository;
+    private final LiveData<List<MovieModel>> mMovieList;
 
     public MovieViewModel(@NonNull Application application) {
         super(application);

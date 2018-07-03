@@ -53,7 +53,9 @@ public class MovieCatalogAdapter extends RecyclerView.Adapter<MovieCatalogAdapte
 
     public void updateList(List<MovieModel> list) {
         if (list != null) {
-            mMovieList = list;
+            mMovieList = (List<MovieModel>) ((ArrayList) list).clone();
+        } else {
+            mMovieList.clear();
         }
         notifyDataSetChanged();
     }
