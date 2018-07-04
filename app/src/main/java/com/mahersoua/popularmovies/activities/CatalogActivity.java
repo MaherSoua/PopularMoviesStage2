@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +31,7 @@ import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity implements MoviesDataLoader.IMoviesCallback {
 
+    private static final String RECYCLER_VIEW_POSITION = "recyclerview_view_position";
     private MovieCatalogAdapter movieCatalogAdapter;
     private RecyclerView movieRecyclerView;
     private int lastSelectedItemId;
@@ -36,6 +40,8 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
     private final String MENU_ITEM_INDEX = "menu_item_selected_index";
     private final String API_URL = "api_url";
     private List<MovieModel> mFavList;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private int savedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,10 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
             @Override
             public void onChanged(@Nullable List<MovieModel> movieList) {
                 mFavList = movieList;
+                if(mCurrentItemIndex > 1){
+                    movieCatalogAdapter.updateList(mFavList);
+                    findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                }
             }
         });
         //
@@ -59,9 +69,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         } else {
             spanCount = 3;
         }
-        RecyclerView.LayoutManager recyclerViewLayoutManager = new GridLayoutManager(this, spanCount);
 
-        movieRecyclerView.setLayoutManager(recyclerViewLayoutManager);
         movieCatalogAdapter = new MovieCatalogAdapter(this, null);
         movieRecyclerView.setAdapter(movieCatalogAdapter);
 
@@ -72,6 +80,8 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         } else {
             findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
         }
+        RecyclerView.LayoutManager recyclerViewLayoutManager = new GridLayoutManager(this, spanCount);
+        movieRecyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         mCurrentApiUrl = MoviesDataLoader.DEFAULT_URL;
         if (savedInstanceState == null) {
@@ -81,10 +91,13 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         } else {
             mCurrentApiUrl = savedInstanceState.getString(API_URL, MoviesDataLoader.DEFAULT_URL);
             mCurrentItemIndex = savedInstanceState.getInt(MENU_ITEM_INDEX, 0);
+            savedPosition = savedInstanceState.getInt(RECYCLER_VIEW_POSITION);
+
             if(mCurrentItemIndex < 2){
                 MoviesDataLoader.getInstance().requestMovieList(this, mCurrentApiUrl);
+            } else {
+                movieRecyclerView.scrollToPosition(savedPosition);
             }
-            movieRecyclerView.smoothScrollToPosition(0);
         }
     }
 
@@ -106,6 +119,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         }
         findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
         findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+        movieRecyclerView.scrollToPosition(savedPosition);
     }
 
     @Override
@@ -178,6 +192,11 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(MENU_ITEM_INDEX, mCurrentItemIndex);
         outState.putString(API_URL, mCurrentApiUrl);
+
+        if (movieRecyclerView != null) {
+            int positionView = ((LinearLayoutManager)movieRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            outState.putInt(RECYCLER_VIEW_POSITION, positionView);
+        }
         super.onSaveInstanceState(outState);
     }
 }
