@@ -59,6 +59,7 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
                 if(mCurrentItemIndex > 1){
                     movieCatalogAdapter.updateList(mFavList);
                     findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -73,15 +74,16 @@ public class CatalogActivity extends AppCompatActivity implements MoviesDataLoad
         movieCatalogAdapter = new MovieCatalogAdapter(this, null);
         movieRecyclerView.setAdapter(movieCatalogAdapter);
 
+        RecyclerView.LayoutManager recyclerViewLayoutManager = new GridLayoutManager(this, spanCount);
+        movieRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+
         if (hasInternetAccess()) {
             findViewById(R.id.connectionErrorTv).setVisibility(View.VISIBLE);
             findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-            return;
         } else {
             findViewById(R.id.connectionErrorTv).setVisibility(View.INVISIBLE);
         }
-        RecyclerView.LayoutManager recyclerViewLayoutManager = new GridLayoutManager(this, spanCount);
-        movieRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+
 
         mCurrentApiUrl = MoviesDataLoader.DEFAULT_URL;
         if (savedInstanceState == null) {
